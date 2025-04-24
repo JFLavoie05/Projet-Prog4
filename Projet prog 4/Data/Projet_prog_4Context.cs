@@ -17,10 +17,13 @@ namespace Projet_prog_4.Data
         
         public DbSet<Projet_prog_4.Data.SiteWeb> SiteWeb { get; set; } = default!;
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new SiteWebConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+
         }
         public DbSet<Projet_prog_4.Data.Panier> Panier { get; set; } = default!;
     }
