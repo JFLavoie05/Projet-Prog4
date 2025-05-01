@@ -1,6 +1,6 @@
 ﻿namespace Projet_prog_4.Data
 {
-    public class Panier
+    public class Commande
     {
         public int Id { get; set; }
         public int Total { get; set; }

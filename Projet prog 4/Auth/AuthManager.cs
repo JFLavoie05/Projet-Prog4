@@ -50,6 +50,9 @@ namespace Projet_prog_4.Auth
             {
                 await _userManager.AddToRoleAsync(user, "UTILISATEUR");
             }
+            //CRÉER LE PANIER ICI
+           // var panier = new Panier(
+            //    )
             return result.Errors;
         }
 

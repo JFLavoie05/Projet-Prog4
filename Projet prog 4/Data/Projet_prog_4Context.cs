@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Projet_prog_4.Data.SeedConfiguration;
 using Projet_prog_4.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Projet_prog_4.Data
 {
-    public class Projet_prog_4Context : DbContext
+    public class Projet_prog_4Context : IdentityDbContext<IdentityUser>
     {
         public Projet_prog_4Context (DbContextOptions<Projet_prog_4Context> options)
             : base(options)
@@ -26,5 +28,6 @@ namespace Projet_prog_4.Data
 
         }
         public DbSet<Projet_prog_4.Data.Panier> Panier { get; set; } = default!;
+        public DbSet<Projet_prog_4.Data.Commande> Commande { get; set; } = default!;
     }
 }

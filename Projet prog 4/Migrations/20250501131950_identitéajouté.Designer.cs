@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_prog_4.Data;
 
@@ -11,9 +12,11 @@ using Projet_prog_4.Data;
 namespace Projet_prog_4.Migrations
 {
     [DbContext(typeof(Projet_prog_4Context))]
-    partial class Projet_prog_4ContextModelSnapshot : ModelSnapshot
+    [Migration("20250501131950_identitéajouté")]
+    partial class identitéajouté
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Projet_prog_4.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b1008ba1-c211-4e15-9734-17cea1d3deb9",
+                            Id = "0523e2f4-0218-4f1a-8f1a-b771f9aec7c2",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
-                            Id = "12733ad3-677e-4fc7-baa2-2d95403bb8fb",
+                            Id = "09e717c1-d2b7-472d-883c-8a7b7743cb09",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -245,9 +248,6 @@ namespace Projet_prog_4.Migrations
                     b.Property<int>("Total")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Panier");
@@ -293,66 +293,20 @@ namespace Projet_prog_4.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Description SiteWeb1",
-                            NbRestant = 500,
-                            Nom = "SiteWeb1",
-                            Prix = "100000"
+                            NbRestant = 0,
+                            Nom = "SiteWeb1"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Description SiteWeb2",
-                            NbRestant = 1000,
-                            Nom = "SiteWeb2",
-                            Prix = "500000"
+                            NbRestant = 0,
+                            Nom = "SiteWeb2"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Description SiteWeb3",
-                            NbRestant = 2000,
-                            Nom = "SiteWeb3",
-                            Prix = "600000"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Description SiteWeb4",
-                            NbRestant = 100,
-                            Nom = "SiteWeb4",
-                            Prix = "300000"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "Description SiteWeb5",
-                            NbRestant = 8000,
-                            Nom = "SiteWeb5",
-                            Prix = "200000"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "Description SiteWeb6",
-                            NbRestant = 4000,
-                            Nom = "SiteWeb6",
-                            Prix = "800000"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "Description SiteWeb7",
-                            NbRestant = 800,
-                            Nom = "SiteWeb7",
-                            Prix = "1000000"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "Description SiteWeb8",
-                            NbRestant = 1500,
-                            Nom = "SiteWeb8",
-                            Prix = "900000"
+                            NbRestant = 0,
+                            Nom = "SiteWeb3"
                         });
                 });
 

@@ -28,7 +28,7 @@ namespace Projet_prog_4.Controllers
         }
 
         // GET: api/Paniers/5
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<int>> GetNbArticlePanier(int id)
         {
             var panier = await _context.Panier.Include(p => p.SiteWeb).Where(p => p.Id == id).FirstOrDefaultAsync();
@@ -41,18 +41,18 @@ namespace Projet_prog_4.Controllers
         }
 
         // GET: api/Paniers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Panier>> GetPanier(int id)
-        {
-            var panier = await _context.Panier.FindAsync(id);
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Panier>> GetPanier(int id)
+        //{
+        //    var panier = await _context.Panier.FindAsync(id);
 
-            if (panier == null)
-            {
-                return NotFound();
-            }
+        //    if (panier == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return panier;
-        }
+        //    return panier;
+        //}
 
         // PUT: api/Paniers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

@@ -26,7 +26,7 @@ namespace Projet_prog_4.Controllers
             // POST: api/Account/register-cuisinier
 
             [HttpPost]
-            [Route("register-cuisinier")]
+            [Route("register-client")]
             public async Task<ActionResult> RegisterUtilisateur([FromBody] Models.RegisterModel
            register)
             {

@@ -13,5 +13,6 @@
     <WebStackScaffolding_DbContextTypeFullName>Projet_prog_4.Data.Projet_prog_4Context</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_IsViewGenerationSelected>True</WebStackScaffolding_IsViewGenerationSelected>
+    <NameOfLastUsedPublishProfile>C:\Users\2233091\Documents\Code\Prog4\Projet-Prog4\Projet prog 4\Properties\PublishProfiles\Default Settings.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
