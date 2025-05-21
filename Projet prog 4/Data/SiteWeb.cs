@@ -6,8 +6,10 @@
         public string? Image { get; set; }
         public required string Nom { get; set; }
         public string? Lien { get; set; }
-        public string? Prix { get; set; }
+        public int? Prix { get; set; }
         public string? Description { get; set; }
         public int NbRestant { get; set; }
+
+        
     }
 }

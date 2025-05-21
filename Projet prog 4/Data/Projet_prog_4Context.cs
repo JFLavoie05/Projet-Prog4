@@ -25,7 +25,10 @@ namespace Projet_prog_4.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new SiteWebConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
-
+            modelBuilder.Entity<Panier>()
+            .HasMany(p => p.SiteWeb)
+            .WithMany() 
+            .UsingEntity(j => j.ToTable("PanierSiteWeb"));
         }
         public DbSet<Projet_prog_4.Data.Panier> Panier { get; set; } = default!;
         public DbSet<Projet_prog_4.Data.Commande> Commande { get; set; } = default!;

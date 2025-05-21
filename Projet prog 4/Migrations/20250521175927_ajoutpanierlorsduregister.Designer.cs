@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_prog_4.Data;
 
@@ -11,9 +12,11 @@ using Projet_prog_4.Data;
 namespace Projet_prog_4.Migrations
 {
     [DbContext(typeof(Projet_prog_4Context))]
-    partial class Projet_prog_4ContextModelSnapshot : ModelSnapshot
+    [Migration("20250521175927_ajoutpanierlorsduregister")]
+    partial class ajoutpanierlorsduregister
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Projet_prog_4.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e8cb414e-c4f6-42d9-886b-def8b993a09a",
+                            Id = "7099ede5-d5df-493f-85d5-f49b5a4556e4",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
-                            Id = "906caf81-c58e-4ded-babf-ee980dd13a93",
+                            Id = "b5bb660e-e1e4-4e43-88ae-32510a310867",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -234,21 +237,6 @@ namespace Projet_prog_4.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PanierSiteWeb", b =>
-                {
-                    b.Property<int>("PanierId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SiteWebId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PanierId", "SiteWebId");
-
-                    b.HasIndex("SiteWebId");
-
-                    b.ToTable("PanierSiteWeb", (string)null);
-                });
-
             modelBuilder.Entity("Projet_prog_4.Data.Commande", b =>
                 {
                     b.Property<int>("Id")
@@ -314,12 +302,17 @@ namespace Projet_prog_4.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Prix")
+                    b.Property<int?>("PanierId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Prix")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CommandeId");
+
+                    b.HasIndex("PanierId");
 
                     b.ToTable("SiteWeb");
 
@@ -330,7 +323,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb1",
                             NbRestant = 500,
                             Nom = "SiteWeb1",
-                            Prix = 100000
+                            Prix = "100000"
                         },
                         new
                         {
@@ -338,7 +331,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb2",
                             NbRestant = 1000,
                             Nom = "SiteWeb2",
-                            Prix = 500000
+                            Prix = "500000"
                         },
                         new
                         {
@@ -346,7 +339,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb3",
                             NbRestant = 2000,
                             Nom = "SiteWeb3",
-                            Prix = 600000
+                            Prix = "600000"
                         },
                         new
                         {
@@ -354,7 +347,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb4",
                             NbRestant = 100,
                             Nom = "SiteWeb4",
-                            Prix = 300000
+                            Prix = "300000"
                         },
                         new
                         {
@@ -362,7 +355,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb5",
                             NbRestant = 8000,
                             Nom = "SiteWeb5",
-                            Prix = 200000
+                            Prix = "200000"
                         },
                         new
                         {
@@ -370,7 +363,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb6",
                             NbRestant = 4000,
                             Nom = "SiteWeb6",
-                            Prix = 800000
+                            Prix = "800000"
                         },
                         new
                         {
@@ -378,7 +371,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb7",
                             NbRestant = 800,
                             Nom = "SiteWeb7",
-                            Prix = 1000000
+                            Prix = "1000000"
                         },
                         new
                         {
@@ -386,7 +379,7 @@ namespace Projet_prog_4.Migrations
                             Description = "Description SiteWeb8",
                             NbRestant = 1500,
                             Nom = "SiteWeb8",
-                            Prix = 900000
+                            Prix = "900000"
                         });
                 });
 
@@ -441,29 +434,23 @@ namespace Projet_prog_4.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PanierSiteWeb", b =>
-                {
-                    b.HasOne("Projet_prog_4.Data.Panier", null)
-                        .WithMany()
-                        .HasForeignKey("PanierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Projet_prog_4.Data.SiteWeb", null)
-                        .WithMany()
-                        .HasForeignKey("SiteWebId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Projet_prog_4.Data.SiteWeb", b =>
                 {
                     b.HasOne("Projet_prog_4.Data.Commande", null)
                         .WithMany("SiteWeb")
                         .HasForeignKey("CommandeId");
+
+                    b.HasOne("Projet_prog_4.Data.Panier", null)
+                        .WithMany("SiteWeb")
+                        .HasForeignKey("PanierId");
                 });
 
             modelBuilder.Entity("Projet_prog_4.Data.Commande", b =>
+                {
+                    b.Navigation("SiteWeb");
+                });
+
+            modelBuilder.Entity("Projet_prog_4.Data.Panier", b =>
                 {
                     b.Navigation("SiteWeb");
                 });

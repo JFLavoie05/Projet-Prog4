@@ -27,7 +27,15 @@ namespace Projet_prog_4
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000") 
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
 
 
             // Add services to the container.
@@ -83,6 +91,7 @@ namespace Projet_prog_4
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("AllowFrontend");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();

@@ -28,7 +28,7 @@ namespace Projet_prog_4.Controllers
         }
 
         // GET: api/Paniers/5
-        [HttpGet("{id}")]
+        [HttpGet("nb-articles/{id}")]
         public async Task<ActionResult<int>> GetNbArticlePanier(int id)
         {
             var panier = await _context.Panier.Include(p => p.SiteWeb).Where(p => p.Id == id).FirstOrDefaultAsync();
@@ -40,19 +40,20 @@ namespace Projet_prog_4.Controllers
             return nbArticle;
         }
 
-        // GET: api/Paniers/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Panier>> GetPanier(int id)
-        //{
-        //    var panier = await _context.Panier.FindAsync(id);
+        //GET: api/Paniers/5
+        [HttpGet("{userid}")]
+        public async Task<ActionResult<Panier>> GetPanier(string userId)
+        {
+            var panier = await _context.Panier.Include(p => p.SiteWeb).FirstOrDefaultAsync(p => p.UserId == userId);
 
-        //    if (panier == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return panier;
-        //}
+            if (panier == null)
+            {
+                return NotFound();
+            }
+
+            return panier;
+        }
 
         // PUT: api/Paniers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -94,6 +95,31 @@ namespace Projet_prog_4.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPanier", new { id = panier.Id }, panier);
+        }
+
+        // POST: api/Paniers/{userId}/ajouter
+        [HttpPost("{userId}/ajouter")]
+        public async Task<IActionResult> AjouterAuPanier(string userId, [FromBody] int siteWebId)
+        {
+            var panier = await _context.Panier
+                .Include(p => p.SiteWeb)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            var site = await _context.SiteWeb.FindAsync(siteWebId);
+
+            if (panier == null || site == null)
+                return NotFound();
+
+            if (panier.SiteWeb.Any(s => s.Id == site.Id)) 
+                return BadRequest("Ce siteWeb est déjà dans votre panier");
+
+            panier.SiteWeb.Add(site);
+            panier.Total += site.Prix ?? 0;
+            site.NbRestant = site.NbRestant - 1;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(panier);
         }
 
         // DELETE: api/Paniers/5

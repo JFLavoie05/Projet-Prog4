@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public int Total { get; set; }
-        public List<SiteWeb>? SiteWeb { get; set; }
+        public List<SiteWeb> SiteWeb { get; set; } = new List<SiteWeb>();
         public string? UserId { get; set; }
     }
 }

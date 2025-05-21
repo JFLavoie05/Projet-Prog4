@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Projet_prog_4.Data;
 
 namespace Projet_prog_4.Auth
 {
@@ -13,11 +15,16 @@ namespace Projet_prog_4.Auth
         Task<IEnumerable<IdentityError>> RegisterUtilisateur(RegisterModel register);
     }
 
-    public class AuthManager(UserManager<IdentityUser> userManager, IConfiguration configuration) : IAuthManager
+    
+
+    
+
+    public class AuthManager(UserManager<IdentityUser> userManager, IConfiguration configuration, Projet_prog_4Context context) : IAuthManager
     {
         private readonly UserManager<IdentityUser> _userManager = userManager;
         private readonly IConfiguration _configuration = configuration;
         private IdentityUser _user;
+        private readonly Projet_prog_4Context _context = context;
 
         public async Task<AuthResponse> Login(LoginModel login)
         {
@@ -50,9 +57,18 @@ namespace Projet_prog_4.Auth
             {
                 await _userManager.AddToRoleAsync(user, "UTILISATEUR");
             }
-            //CRÉER LE PANIER ICI
-           // var panier = new Panier(
-            //    )
+            var existingPanier = await _context.Panier.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (existingPanier == null)
+            {
+                var nouveauPanier = new Panier
+                {
+                    UserId = user.Id,
+                    Total = 0,
+                    SiteWeb = new List<SiteWeb>()
+                };
+                _context.Panier.Add(nouveauPanier);
+                await _context.SaveChangesAsync();
+            }
             return result.Errors;
         }
 
