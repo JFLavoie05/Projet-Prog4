@@ -1,31 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Projet_prog_4.Auth;
 
 namespace Projet_prog_4.Controllers
 {
         [Route("api/[controller]")]
         [ApiController]
-        public class AccountsController(IAuthManager authManager) : ControllerBase
+        public class AccountsController : ControllerBase
         {
-            private readonly IAuthManager _authManager = authManager;
+            private readonly IAuthManager _authManager;
+            private readonly UserManager<IdentityUser> _userManager;
+            private readonly RoleManager<IdentityRole> _roleManager;
 
-            // POST: api/Account/register-ogre
-            //[HttpPost]
-            //[Route("register-ogre")]
-            //public async Task<ActionResult> RegisterOgre([FromBody] Models.RegisterModel register)
-            //{
-            //    var errors = await _authManager.RegisterOgre(register);
-            //    if (errors.Any())
-            //    {
-            //        foreach (var error in errors)
-            //            ModelState.AddModelError(error.Code, error.Description);
-            //        return BadRequest(ModelState);
-            //    }
-            //    return Ok();
-            //}
-            // POST: api/Account/register-cuisinier
+            public AccountsController(
+                IAuthManager authManager,
+                UserManager<IdentityUser> userManager,
+                RoleManager<IdentityRole> roleManager)
+            {
+                _authManager = authManager;
+                _userManager = userManager;
+                _roleManager = roleManager;
+            }
 
-            [HttpPost]
+
+        // POST: api/Account/register-ogre
+        //[HttpPost]
+        //[Route("register-ogre")]
+        //public async Task<ActionResult> RegisterOgre([FromBody] Models.RegisterModel register)
+        //{
+        //    var errors = await _authManager.RegisterOgre(register);
+        //    if (errors.Any())
+        //    {
+        //        foreach (var error in errors)
+        //            ModelState.AddModelError(error.Code, error.Description);
+        //        return BadRequest(ModelState);
+        //    }
+        //    return Ok();
+        //}
+        // POST: api/Account/register-cuisinier
+
+        [HttpPost]
             [Route("register-client")]
             public async Task<ActionResult> RegisterUtilisateur([FromBody] Models.RegisterModel
            register)
@@ -49,5 +63,24 @@ namespace Projet_prog_4.Controllers
                     return Unauthorized();
                 return Ok(authResponse);
             }
+            [HttpPost("assign-admin-role")]
+            public async Task<IActionResult> AssignAdminRole([FromBody] string username)
+            {
+                var user = await _userManager.FindByNameAsync(username);
+                if (user == null) return NotFound("Utilisateur non trouvé");
+
+                if (!await _roleManager.RoleExistsAsync("Admin"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                }
+
+                if (!await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    await _userManager.AddToRoleAsync(user, "Admin");
+                }
+
+                return Ok("Rôle admin assigné avec succès.");
+            }
+
         }
 }

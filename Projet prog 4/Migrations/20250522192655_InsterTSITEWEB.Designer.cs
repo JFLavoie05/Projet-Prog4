@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_prog_4.Data;
 
@@ -11,9 +12,11 @@ using Projet_prog_4.Data;
 namespace Projet_prog_4.Migrations
 {
     [DbContext(typeof(Projet_prog_4Context))]
-    partial class Projet_prog_4ContextModelSnapshot : ModelSnapshot
+    [Migration("20250522192655_InsterTSITEWEB")]
+    partial class InsterTSITEWEB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Projet_prog_4.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c6cfb6d4-6a52-4575-a104-afcc825868a6",
+                            Id = "270ac1ae-ac3c-45d6-8105-318f7eb3fc73",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
-                            Id = "a64f2dac-6e2e-492f-badf-135fcf88b006",
+                            Id = "9da30c93-013d-42fe-9dd5-5b0172e9a0aa",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -332,7 +335,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.google.com",
                             NbRestant = 500,
                             Nom = "Google",
-                            Prix = 10000
+                            Prix = 1000000
                         },
                         new
                         {
@@ -342,7 +345,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.facebook.com",
                             NbRestant = 300,
                             Nom = "Facebook",
-                            Prix = 8000
+                            Prix = 800000
                         },
                         new
                         {
@@ -352,7 +355,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.youtube.com",
                             NbRestant = 400,
                             Nom = "YouTube",
-                            Prix = 12000
+                            Prix = 1200000
                         },
                         new
                         {
@@ -362,7 +365,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.amazon.com",
                             NbRestant = 250,
                             Nom = "Amazon",
-                            Prix = 9500
+                            Prix = 950000
                         },
                         new
                         {
@@ -372,7 +375,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.netflix.com",
                             NbRestant = 600,
                             Nom = "Netflix",
-                            Prix = 7000
+                            Prix = 700000
                         },
                         new
                         {
@@ -382,7 +385,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.wikipedia.org",
                             NbRestant = 1000,
                             Nom = "Wikipedia",
-                            Prix = 1000
+                            Prix = 100000
                         },
                         new
                         {
@@ -392,7 +395,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.linkedin.com",
                             NbRestant = 350,
                             Nom = "LinkedIn",
-                            Prix = 4500
+                            Prix = 450000
                         },
                         new
                         {
@@ -402,7 +405,7 @@ namespace Projet_prog_4.Migrations
                             Lien = "https://www.reddit.com",
                             NbRestant = 800,
                             Nom = "Reddit",
-                            Prix = 3000
+                            Prix = 300000
                         });
                 });
 
