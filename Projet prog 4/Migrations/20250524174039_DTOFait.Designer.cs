@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_prog_4.Data;
 
@@ -11,9 +12,11 @@ using Projet_prog_4.Data;
 namespace Projet_prog_4.Migrations
 {
     [DbContext(typeof(Projet_prog_4Context))]
-    partial class Projet_prog_4ContextModelSnapshot : ModelSnapshot
+    [Migration("20250524174039_DTOFait")]
+    partial class DTOFait
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Projet_prog_4.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1a3aedde-e644-4da6-bfff-44cef23e3e90",
+                            Id = "c70e9032-750c-42dc-b047-c823eeccd3b0",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
-                            Id = "3f588718-c280-434a-a777-82638cb1c1b9",
+                            Id = "b046d72b-f205-428b-b4a3-7ceb2d69ee57",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

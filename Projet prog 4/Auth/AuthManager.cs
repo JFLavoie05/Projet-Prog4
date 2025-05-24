@@ -88,6 +88,7 @@ namespace Projet_prog_4.Auth
                  new (JwtRegisteredClaimNames.Sub, _user.UserName),
                  new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                  new (JwtRegisteredClaimNames.Email, _user.Email),
+                 new Claim("uid", _user.Id),
             }.Union(userClaims).Union(roleClaims).ToList();
             claims.Add(new Claim("role", roles.FirstOrDefault() ?? "Utilisateur"));
             var token = new JwtSecurityToken(

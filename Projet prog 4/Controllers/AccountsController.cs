@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Projet_prog_4.Auth;
 
@@ -41,7 +42,8 @@ namespace Projet_prog_4.Controllers
 
         [HttpPost]
             [Route("register-client")]
-            public async Task<ActionResult> RegisterUtilisateur([FromBody] Models.RegisterModel
+        [AllowAnonymous]
+        public async Task<ActionResult> RegisterUtilisateur([FromBody] Models.RegisterModel
            register)
             {
                 var errors = await _authManager.RegisterUtilisateur(register);
@@ -56,15 +58,19 @@ namespace Projet_prog_4.Controllers
             // POST: api/Account/register
             [HttpPost]
             [Route("login")]
-            public async Task<ActionResult> Login([FromBody] Models.LoginModel login)
+            [AllowAnonymous]
+        public async Task<ActionResult> Login([FromBody] Models.LoginModel login)
             {
                 var authResponse = await _authManager.Login(login);
                 if (authResponse is null)
                     return Unauthorized();
                 return Ok(authResponse);
             }
+
+            //Ce endpoint est seulement là car quand on fait un add-migration,update-database, le role d'admin se perd
             [HttpPost("assign-admin-role")]
-            public async Task<IActionResult> AssignAdminRole([FromBody] string username)
+            [AllowAnonymous]
+        public async Task<IActionResult> AssignAdminRole([FromBody] string username)
             {
                 var user = await _userManager.FindByNameAsync(username);
                 if (user == null) return NotFound("Utilisateur non trouvé");

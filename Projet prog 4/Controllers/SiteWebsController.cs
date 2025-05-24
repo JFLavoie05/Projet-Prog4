@@ -2,56 +2,63 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projet_prog_4.Data;
+using Projet_prog_4.Models.SiteWebDTO;
 
 namespace Projet_prog_4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SiteWebsController : ControllerBase
+    public class SiteWebsController(Projet_prog_4Context context, IMapper mapper, ILogger<SiteWebsController> logger) : ControllerBase
     {
-        private readonly Projet_prog_4Context _context;
+        private readonly Projet_prog_4Context _context = context;
+        private readonly IMapper _mapper = mapper;
+        private readonly ILogger<SiteWebsController> _logger = logger;
 
-        public SiteWebsController(Projet_prog_4Context context)
-        {
-            _context = context;
-        }
 
         // GET: api/SiteWebs
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SiteWeb>>> GetSiteWeb()
+        public async Task<ActionResult<IEnumerable<GetSiteWebDTO>>> GetSiteWeb()
         {
-            return await _context.SiteWeb.ToListAsync();
+            var siteWeb = await _context.SiteWeb.ToListAsync();
+            var SiteWebDTO = _mapper.Map<List<GetSiteWebDTO>>(siteWeb);
+            return Ok(SiteWebDTO);
         }
 
         // GET: api/SiteWebs/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<ActionResult<SiteWeb>> GetSiteWeb(int id)
+        public async Task<ActionResult<DetailsSiteWebDTO>> GetSiteWeb(int id)
         {
-            var siteWeb = await _context.SiteWeb.FindAsync(id);
+            var siteWeb = await _context.SiteWeb.FirstOrDefaultAsync(s => s.Id == id);
 
             if (siteWeb == null)
             {
                 return NotFound();
             }
 
-            return siteWeb;
+            return _mapper.Map<DetailsSiteWebDTO>(siteWeb);
         }
 
         // PUT: api/SiteWebs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSiteWeb(int id, SiteWeb siteWeb)
+        public async Task<IActionResult> PutSiteWeb(int id, PutSiteWebDTO siteWebDTO)
         {
-            if (id != siteWeb.Id)
-            {
+            if (id != siteWebDTO.Id)
                 return BadRequest();
-            }
 
-            _context.Entry(siteWeb).State = EntityState.Modified;
+            var siteWeb = await _context.SiteWeb.FindAsync(id);
+            if (siteWeb == null)
+                return NotFound();
+
+            _mapper.Map(siteWebDTO, siteWeb); 
 
             try
             {
@@ -60,30 +67,30 @@ namespace Projet_prog_4.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!SiteWebExists(id))
-                {
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
         }
 
         // POST: api/SiteWebs
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<SiteWeb>> PostSiteWeb(SiteWeb siteWeb)
+        public async Task<ActionResult<DetailsSiteWebDTO>> PostSiteWeb(PostSiteWebDTO siteWebDTO)
         {
-            _context.SiteWeb.Add(siteWeb);
+            var nouveauSiteWeb = _mapper.Map<SiteWeb>(siteWebDTO);
+
+            _context.SiteWeb.Add(nouveauSiteWeb);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSiteWeb", new { id = siteWeb.Id }, siteWeb);
+            var detailsDto = _mapper.Map<DetailsSiteWebDTO>(nouveauSiteWeb);
+
+            return CreatedAtAction(nameof(GetSiteWeb), new { id = nouveauSiteWeb.Id }, detailsDto);
         }
 
         // DELETE: api/SiteWebs/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSiteWeb(int id)
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace Projet_prog_4.Controllers
         }
 
         // GET: api/Commandes
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Commande>>> GetCommande()
         {
@@ -28,6 +30,7 @@ namespace Projet_prog_4.Controllers
         }
 
         // GET: api/Commandes/5
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Commande>> GetCommande(int id)
         {
@@ -43,6 +46,7 @@ namespace Projet_prog_4.Controllers
 
         // PUT: api/Commandes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCommande(int id, Commande commande)
         {
@@ -76,6 +80,7 @@ namespace Projet_prog_4.Controllers
 
         // POST: api/Commandes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Commande>> PostCommande(Commande commande)
         {
@@ -86,6 +91,7 @@ namespace Projet_prog_4.Controllers
         }
 
         // DELETE: api/Commandes/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCommande(int id)
         {

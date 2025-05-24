@@ -1,33 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projet_prog_4.Data;
+using Projet_prog_4.Models.PanierDTO;
+using static Azure.Core.HttpHeader;
 
 namespace Projet_prog_4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaniersController : ControllerBase
+    public class PaniersController(Projet_prog_4Context context, IMapper mapper, ILogger<PaniersController> logger) : ControllerBase
     {
-        private readonly Projet_prog_4Context _context;
+        private readonly Projet_prog_4Context _context = context;
+        private readonly IMapper _mapper = mapper;
+        private readonly ILogger<PaniersController> _logger = logger;
 
-        public PaniersController(Projet_prog_4Context context)
-        {
-            _context = context;
-        }
 
         // GET: api/Paniers
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Panier>>> GetPanier()
+        public async Task<ActionResult<IEnumerable<DetailsPanierDTO>>> GetPaniers()
         {
-            return await _context.Panier.ToListAsync();
+            var paniers = await _context.Panier.Include(p => p.SiteWeb).ToListAsync();
+            return Ok(_mapper.Map<List<DetailsPanierDTO>>(paniers));
         }
 
         // GET: api/Paniers/5
+        [Authorize]
         [HttpGet("nb-articles/{id}")]
         public async Task<ActionResult<int>> GetNbArticlePanier(int id)
         {
@@ -41,66 +47,93 @@ namespace Projet_prog_4.Controllers
         }
 
         //GET: api/Paniers/5
-        [HttpGet("{userid}")]
-        public async Task<ActionResult<Panier>> GetPanier(string userId)
+        [Authorize(Roles = "Utilisateur")]
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<DetailsPanierDTO>> GetPanier(string userId)
         {
-            var panier = await _context.Panier.Include(p => p.SiteWeb).FirstOrDefaultAsync(p => p.UserId == userId);
+            var IdUserConnecte = User.FindFirst("uid")?.Value;
+            if (IdUserConnecte != userId)
+                return Forbid();
 
+            var panier = await _context.Panier
+                .Include(p => p.SiteWeb)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
 
             if (panier == null)
-            {
                 return NotFound();
-            }
 
-            return panier;
+            return _mapper.Map<DetailsPanierDTO>(panier);
         }
 
         // PUT: api/Paniers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Utilisateur")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPanier(int id, Panier panier)
+        public async Task<IActionResult> PutPanier(int id, PutPanierDTO dto)
         {
-            if (id != panier.Id)
-            {
+
+            if (id != dto.Id)
                 return BadRequest();
-            }
 
-            _context.Entry(panier).State = EntityState.Modified;
+            var panier = await _context.Panier
+                .Include(p => p.SiteWeb)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            try
+            if (panier == null)
+                return NotFound();
+
+            var currentUserId = User.FindFirst("uid")?.Value;
+            _logger.LogWarning("===== AUTH LOGS =====");
+            _logger.LogWarning("[JWT] sub: {Sub}", currentUserId);
+            if (panier.UserId != currentUserId)
+                return Forbid(); 
+
+            _mapper.Map(dto, panier);
+
+            if (dto.SiteWebIds != null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PanierExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                panier.SiteWeb = await _context.SiteWeb
+                    .Where(s => dto.SiteWebIds.Contains(s.Id))
+                    .ToListAsync();
             }
 
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
         // POST: api/Paniers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Utilisateur")]
         [HttpPost]
-        public async Task<ActionResult<Panier>> PostPanier(Panier panier)
+        public async Task<ActionResult<DetailsPanierDTO>> PostPanier(PostPanierDTO dto)
         {
+            var panier = _mapper.Map<Panier>(dto);
+
+           
+            panier.SiteWeb = await _context.SiteWeb
+                .Where(s => dto.SiteWebIds.Contains(s.Id))
+                .ToListAsync();
+
             _context.Panier.Add(panier);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPanier", new { id = panier.Id }, panier);
+            return CreatedAtAction(nameof(GetPanier), new { userId = panier.UserId }, _mapper.Map<DetailsPanierDTO>(panier));
         }
 
         // POST: api/Paniers/{userId}/ajouter
+        [Authorize(Roles = "Utilisateur")]
         [HttpPost("{userId}/ajouter")]
         public async Task<IActionResult> AjouterAuPanier(string userId, [FromBody] int siteWebId)
         {
+            var currentUserId = User.FindFirst("uid")?.Value;
+            
+            _logger.LogWarning("===== AUTH LOGS =====");
+            _logger.LogWarning("[JWT] sub: {Sub}", currentUserId);
+            _logger.LogWarning("[ROUTE] userId: {RouteUserId}", userId);
+            
+            if (userId != currentUserId)
+                return Forbid(); 
+
             var panier = await _context.Panier
                 .Include(p => p.SiteWeb)
                 .FirstOrDefaultAsync(p => p.UserId == userId);
@@ -119,10 +152,11 @@ namespace Projet_prog_4.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(panier);
+            return Ok(_mapper.Map<DetailsPanierDTO>(panier));
         }
 
         // DELETE: api/Paniers/5
+        [Authorize(Roles = "Utilisateur")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePanier(int id)
         {

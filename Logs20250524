@@ -1,0 +1,6 @@
+2025-05-24 16:55:05.010 -04:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert.
+2025-05-24 16:55:05.145 -04:00 [INF] Now listening on: https://localhost:7271
+2025-05-24 16:55:05.162 -04:00 [INF] Now listening on: http://localhost:5183
+2025-05-24 16:55:05.168 -04:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-24 16:55:05.171 -04:00 [INF] Hosting environment: Development
+2025-05-24 16:55:05.174 -04:00 [INF] Content root path: C:\Users\2233091\Documents\Code\Prog4\Projet-Prog4\Projet prog 4

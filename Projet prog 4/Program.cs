@@ -10,6 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 using static Projet_prog_4.Data.Projet_prog_4Context;
 using System.Text;
 using Projet_prog_4.Auth;
+using Projet_prog_4.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Projet_prog_4
 {
@@ -63,13 +66,20 @@ namespace Projet_prog_4
                      ValidAudience = builder.Configuration["JWT:Audience"],
                      ValidIssuer = builder.Configuration["JWT:Issuer"],
                      IssuerSigningKey = new
-     SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+                    SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])),
+                    RoleClaimType = ClaimTypes.Role
                  };
              });
 
             // avec DTO
-            //builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
+            builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+            });
             builder.Host.UseSerilog((context, config) => {
                 config.WriteTo.Console()
                 .ReadFrom.Configuration(context.Configuration)
@@ -77,7 +87,7 @@ namespace Projet_prog_4
                 .Enrich.WithEnvironmentName()
                 .Enrich.WithProperty("ApplicationName", context.HostingEnvironment.ApplicationName);
             });
-
+            builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
             builder.Services.AddScoped<IAuthManager, AuthManager>();
 
 
