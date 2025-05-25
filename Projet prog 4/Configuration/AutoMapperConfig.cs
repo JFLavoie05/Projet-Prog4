@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Projet_prog_4.Data;
+using Projet_prog_4.Models.CommandeDTO;
 using Projet_prog_4.Models.PanierDTO;
 using Projet_prog_4.Models.SiteWebDTO;
 
@@ -20,6 +21,11 @@ namespace Projet_prog_4.Configuration
                 .ForMember(dest => dest.SiteWeb, opt => opt.Ignore()); 
             CreateMap<PutPanierDTO, Panier>()
                 .ForMember(dest => dest.SiteWeb, opt => opt.Ignore());
+            CreateMap<Commande, GetCommandeDTO>();
+            CreateMap<PostCommandeDTO, Commande>()
+                .ForMember(dest => dest.SiteWeb, opt => opt.Ignore()); 
+            CreateMap<PutCommandeDTO, Commande>()
+                .ForMember(dest => dest.SiteWeb, opt => opt.Ignore()); 
         }
     }
 }

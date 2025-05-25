@@ -2,77 +2,81 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projet_prog_4.Data;
+using Projet_prog_4.Models.CommandeDTO;
 
 namespace Projet_prog_4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommandesController : ControllerBase
+    public class CommandesController(Projet_prog_4Context context, IMapper mapper) : ControllerBase
     {
-        private readonly Projet_prog_4Context _context;
+        private readonly Projet_prog_4Context _context = context;
+        private readonly IMapper _mapper = mapper;
 
-        public CommandesController(Projet_prog_4Context context)
-        {
-            _context = context;
-        }
+        
+
+       
 
         // GET: api/Commandes
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Commande>>> GetCommande()
+        public async Task<ActionResult<IEnumerable<GetCommandeDTO>>> GetCommande()
         {
-            return await _context.Commande.ToListAsync();
+            var commandes = await _context.Commande
+                .Include(c => c.SiteWeb)
+                .ToListAsync();
+
+            return Ok(_mapper.Map<List<GetCommandeDTO>>(commandes));
         }
 
         // GET: api/Commandes/5
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Commande>> GetCommande(int id)
+        public async Task<ActionResult<GetCommandeDTO>> GetCommande(int id)
         {
-            var commande = await _context.Commande.FindAsync(id);
+            var commande = await _context.Commande
+                .Include(c => c.SiteWeb)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (commande == null)
-            {
                 return NotFound();
-            }
 
-            return commande;
+            return _mapper.Map<GetCommandeDTO>(commande);
         }
 
         // PUT: api/Commandes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommande(int id, Commande commande)
+        public async Task<IActionResult> PutCommande(int id, PutCommandeDTO dto)
         {
-            if (id != commande.Id)
-            {
+            if (id != dto.Id)
                 return BadRequest();
-            }
 
-            _context.Entry(commande).State = EntityState.Modified;
+            var commande = await _context.Commande
+                .Include(c => c.SiteWeb)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
-            try
+            if (commande == null)
+                return NotFound();
+
+            _mapper.Map(dto, commande);
+
+            // Mettre à jour les relations avec SiteWeb
+            if (dto.SiteWebIds != null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommandeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                commande.SiteWeb = await _context.SiteWeb
+                    .Where(s => dto.SiteWebIds.Contains(s.Id))
+                    .ToListAsync();
             }
 
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
@@ -82,12 +86,23 @@ namespace Projet_prog_4.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Commande>> PostCommande(Commande commande)
+        public async Task<ActionResult<GetCommandeDTO>> PostCommande(PostCommandeDTO dto)
         {
+            var commande = _mapper.Map<Commande>(dto);
+
+            // Charger les objets SiteWeb à partir des IDs
+            if (dto.SiteWebIds != null)
+            {
+                commande.SiteWeb = await _context.SiteWeb
+                    .Where(s => dto.SiteWebIds.Contains(s.Id))
+                    .ToListAsync();
+            }
+
             _context.Commande.Add(commande);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCommande", new { id = commande.Id }, commande);
+            var getDto = _mapper.Map<GetCommandeDTO>(commande);
+            return CreatedAtAction(nameof(GetCommande), new { id = commande.Id }, getDto);
         }
 
         // DELETE: api/Commandes/5
